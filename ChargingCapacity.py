@@ -7,22 +7,18 @@ from scipy.integrate import simpson
 # Set parameters
 grid_capacity = 150
 Confidence = 0.9 
-Average_EVBattery = 55
+avg_battery_size = 55
 
 # Read the CSV file
 data = pd.read_csv('Import_template.csv')
 
 data['Timestamp'] = pd.to_datetime(data['Timestamp'], format="%d/%m/%Y %H:%M")
-print(data.dtypes)
-print(data.head())
-
 data['Time'] = data['Timestamp'].dt.time #Extract Time
 data['Date'] = data['Timestamp'].dt.date #Extract Date
 data['Day_of_Week'] = data['Timestamp'].dt.day_name() #Extract day of the week
-data['Hour'] = data['Timestamp'].dt.hour #extract hour
+data['Hour'] = data['Timestamp'].dt.hour 
+
 print(data.head())
-
-
 
 #Define filter options
 def filter_data(data, filter_option):
@@ -38,7 +34,7 @@ def filter_data(data, filter_option):
         raise ValueError("Invalid filter option")
     
 # Plot confidence interval
-def plot_average_power_used(data,filter_option):
+def plot_average_power_used(data, filter_option, grid_capacity, avg_battery_size):
     filtered_data = filter_data(data,filter_option)
     grouped = filtered_data.groupby('Hour')['Power_Kw']
     means = grouped.mean()
@@ -55,7 +51,7 @@ def plot_average_power_used(data,filter_option):
     # Calculate the available energy (area between grid capacity and upper bound)
     available_energy = np.maximum(0, grid_capacity - y_upper)  # Only consider positive differences
     total_available_energy = simpson(available_energy, x)  # Integrate using Simpson's rule
-    Total_EVBattery_charged = int(total_available_energy/Average_EVBattery)
+    Total_EVBattery_charged = int(total_available_energy/avg_battery_size)
 
     #    # Create Plotly graph
     fig = go.Figure()
@@ -157,6 +153,6 @@ def plot_average_power_used(data,filter_option):
     fig.show()
 
 # Example: Visualize for Weekdays
-plot_average_power_used(data, filter_option="All Days")
+plot_average_power_used(data, filter_option="All Days", grid_capacity=grid_capacity, avg_battery_size=avg_battery_size)
 
 
