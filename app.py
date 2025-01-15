@@ -5,9 +5,47 @@ from scipy.stats import sem, t
 from scipy.integrate import simpson
 import streamlit as st
 
+# Set up custom CSS for the shadow effect
+st.markdown(
+    """
+    <style>
+    .title-container {
+        background-color: rgba(255, 255, 255, 0.9); /* Semi-transparent white */
+        border-radius: 15px; /* Rounded corners */
+        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* Shadow effect */
+        padding: 20px;
+        margin-bottom: 20px;
+        text-align: center;
+    }
+    .title-container img {
+        width: 100px; /* Adjust the logo size */
+    }
+    .title-container h1 {
+        margin: 10px 0 0 0;
+        font-size: 38px;
+        color: #333333; /* Title color */
+    }
+    </style>
+    """,
+    unsafe_allow_html=True
+)
+
+st.image("LogoFlexpower.png", width =100)
+
+# Display the container
+st.markdown(
+    """
+    <div class="title-container">
+        <h1>Charging Power Capacity Tool</h1>
+    </div>
+    """,
+    unsafe_allow_html=True
+)
+
 # Title of the App
-st.title("Charging Power Graph Generator")
-st.write("Upload a CSV file with the correct template format to generate the graph.")
+st.title("Calculate your available charging capacity here")
+st.write("This tool calculates how many EVs you can charge at your grid connection based on historical data  \n"
+         "Upload the CSV file with the correct template to run the calculations")
 
 # Download Template CSV
 with open("Import_template.csv", "rb") as file:
@@ -19,7 +57,7 @@ with open("Import_template.csv", "rb") as file:
     )
 
 # File Upload
-uploaded_file = st.file_uploader("Upload your CSV file", type=["csv"])
+uploaded_file = st.file_uploader("Upload your CSV energy profile file", type=["csv"])
 if uploaded_file is not None:
     data = pd.read_csv(uploaded_file)
     
@@ -34,8 +72,8 @@ if uploaded_file is not None:
     filter_option = st.selectbox("Select Time Filter", ["All Days", "Weekdays", "Weekends", "After Business Hours"])
     
     # User Inputs for Grid Capacity and Average Battery Size
-    grid_capacity = st.number_input("Grid Capacity (kW)", min_value=0, value=150)
-    avg_battery_size = st.number_input("Average EV Battery Size (kWh)", min_value=1, value=55)
+    grid_capacity = st.number_input("Grid Capacity (kW)", min_value=0, value=2500)
+    avg_battery_size = st.number_input("Average EV Battery Size (kWh)", min_value=1, value=99)
 
     # Function Definitions
     def filter_data(data, filter_option):
